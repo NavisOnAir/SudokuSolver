@@ -16,6 +16,9 @@ public class Ui {
     public int _startButtonX;
     public int _startButtonY;
 
+    public int _solveButtonX;
+    public int _solveButtonY;
+
     public int _highlightedX;
     public int _highlightedY;
     public boolean _isHighlighted = false;
@@ -43,8 +46,22 @@ public class Ui {
     }
 
     public void drawGame(Graphics2D g2d) {
-        for (int x = 0; x < _sudoku.getWidth(); x += _sudoku._tileSize) {
-            for (int y = 0; y < _sudoku.getHeight(); y += _sudoku._tileSize) {
+        // solve button
+        String strSolveButton = "Solve";
+        float fondSoziSolveButton = 10f * _sudoku._scale;
+        int sbX = (int) (_sudoku.getWidth() * 0.8);
+        int sbY = (int) (_sudoku.getHeight() * 0.99);
+
+        _solveButtonX = sbX;
+        _solveButtonY = sbY;
+
+        g2d.setColor(Color.white);
+        g2d.setFont(_defaultFond.deriveFont(fondSoziSolveButton));
+        g2d.drawString(strSolveButton, sbX, sbY);
+
+        // sudoku field
+        for (int x = 0; x < _sudoku.get_sudokuWidth(); x += _sudoku._tileSize) {
+            for (int y = 0; y < _sudoku.get_sudokuHeight(); y += _sudoku._tileSize) {
 
                 // number coordinates
                 int xCord = x / _sudoku._tileSize;

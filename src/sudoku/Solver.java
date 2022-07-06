@@ -9,7 +9,17 @@ public class Solver {
         _sudoku = sudoku;
     }
 
-    public boolean bruteForce(int index) {
+    public boolean solve() {
+        bruteForce(1);
+        for (int i = 1; i <= 9; i++) {
+            if (_sudoku.insertNumber(0, 0, i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean bruteForce(int index) {
         int[] cords = convertCords(index, _sudoku.get_field());
         int x = cords[0];
         int y = cords[1];
@@ -67,6 +77,7 @@ public class Solver {
                 }
             }
         }
+        System.out.println("Deleted num");
         _sudoku.deleteNum(x, y);
         return false;
     }

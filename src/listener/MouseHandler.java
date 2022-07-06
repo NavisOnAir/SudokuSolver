@@ -29,12 +29,17 @@ public class MouseHandler implements java.awt.event.MouseListener {
 
         // in-game
         if (_sudoku._gameState == _sudoku.STATE_GAME) {
-
             // highlight tile
-            int x = (int) e.getX() / _sudoku._tileSize;
-            int y = (int) e.getY() / _sudoku._tileSize;
-            _ui.highlight(x, y);
+            if (e.getX() < _sudoku.get_sudokuWidth() && e.getY() < _sudoku.get_sudokuHeight()) {
+                int x = (int) e.getX() / _sudoku._tileSize;
+                int y = (int) e.getY() / _sudoku._tileSize;
+                _ui.highlight(x, y);
+            }
 
+            // solve button
+            if (_ui.checkRectangle(e.getX(), e.getY(), _ui._defaultFond.deriveFont(10f * _sudoku._scale).getStringBounds("Solve", _ui._frc), _ui._solveButtonX, _ui._solveButtonY)) {
+                _sudoku.solve();
+            }
         }
     }
 

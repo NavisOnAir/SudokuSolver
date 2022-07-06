@@ -25,6 +25,8 @@ public class Sudoku extends JPanel implements Runnable {
     public final int _tileSize = _origTileSize * _scale;
     private final int _screenWidth;
     private final int _screenHeight;
+    private final int _sudokuWidth;
+    private final int _sudokuHeight;
 
     // instances
     // game thread
@@ -58,8 +60,10 @@ public class Sudoku extends JPanel implements Runnable {
         }
 
         // initialize screen
-        _screenWidth = _tileSize * 9;
-        _screenHeight = _tileSize * 9;
+        _sudokuWidth = _tileSize * 9;
+        _sudokuHeight = _tileSize * 9;
+        _screenWidth = _sudokuWidth;
+        _screenHeight = _sudokuHeight + 50;
         this.setPreferredSize(new Dimension(_screenWidth, _screenHeight));
         this.setBackground(Color.black);
         this.setFocusable(true);
@@ -69,6 +73,12 @@ public class Sudoku extends JPanel implements Runnable {
         // listener
         addMouseListener(_mouseHand);
         addKeyListener(_keyHand);
+    }
+
+    // solver
+    public void solve() {
+        Solver sl = new Solver(this);
+        System.out.println(sl.solve());
     }
 
     /**
@@ -133,6 +143,10 @@ public class Sudoku extends JPanel implements Runnable {
         return true;
     }
 
+    public boolean isOccupied(int x, int y) {
+        return _startField[y][x] != 0;
+    }
+
     // output
     public void print() {
         for (int[] row : _field) {
@@ -154,7 +168,7 @@ public class Sudoku extends JPanel implements Runnable {
 
     // input
     public boolean input(int x, int y, int number) {
-        if (_field[y][x] != 0) {
+        if (_startField[y][x] != 0) {
             System.out.println("Occupied position");
             return false;
         }
@@ -174,11 +188,16 @@ public class Sudoku extends JPanel implements Runnable {
     }
 
     public boolean insertNumber(int x, int y, int number) {
-        if (!input(x, y, number)) {
+        return input(x, y, number);
+    }
+
+    public boolean deleteNum(int x, int y) {
+        if (_startField[y][x] == 0) {
+            _field[y][x] = 0;
+            return true;
+        } else {
             return false;
         }
-
-        return true;
     }
 
     public void startGame() {
@@ -284,5 +303,13 @@ public class Sudoku extends JPanel implements Runnable {
 
     public int[][] get_startField() {
         return _startField;
+    }
+
+    public int get_sudokuWidth() {
+        return _sudokuWidth;
+    }
+
+    public int get_sudokuHeight() {
+        return _sudokuHeight;
     }
 }

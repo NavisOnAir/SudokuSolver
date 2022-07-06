@@ -1,3 +1,4 @@
+import sudoku.Solver;
 import sudoku.Sudoku;
 
 import javax.swing.JFrame;

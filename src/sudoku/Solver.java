@@ -10,7 +10,7 @@ public class Solver implements Runnable {
     }
 
     public boolean solve() {
-        return bruteForce(0, 100000000);
+        return bruteForce(0, 10000000);
     }
 
     private boolean bruteForce(int index, long speed) {

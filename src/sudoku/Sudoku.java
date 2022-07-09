@@ -52,6 +52,18 @@ public class Sudoku extends JPanel implements Runnable {
                         {0, 9, 0, 0, 7, 5, 0, 0, 6},
                         {0, 0, 0, 0, 1, 2, 0, 4, 0}
                 };
+        _field = new int[][]
+                {
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 1, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0}
+                };
         _startField = new int[_field.length][_field[0].length];
         for (int i = 0; i < _startField.length; i++) {
             for (int j = 0; j < _startField[0].length; j++) {
@@ -62,7 +74,7 @@ public class Sudoku extends JPanel implements Runnable {
         // initialize screen
         _sudokuWidth = _tileSize * 9;
         _sudokuHeight = _tileSize * 9;
-        _screenWidth = _sudokuWidth;
+        _screenWidth = _sudokuWidth + 1;
         _screenHeight = _sudokuHeight + 50;
         this.setPreferredSize(new Dimension(_screenWidth, _screenHeight));
         this.setBackground(Color.black);

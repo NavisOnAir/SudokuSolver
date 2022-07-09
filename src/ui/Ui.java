@@ -12,6 +12,14 @@ public class Ui {
     public FontRenderContext _frc = new FontRenderContext(null, true, true);
     public Font _defaultFond = new Font("Courier", Font.PLAIN, 20);
 
+    // colors
+    public Color _numberColor;
+    public Color _startNumberColor;
+    public Color _borderColor;
+    public Color _thickBorderColor;
+    public Color _highlightColor;
+    public Color _buttonColor;
+
     // ui
     public int _startButtonX;
     public int _startButtonY;
@@ -29,6 +37,13 @@ public class Ui {
     public Ui(Sudoku sudoku) {
         // instances
         _sudoku = sudoku;
+
+        _numberColor = Color.white;
+        _startNumberColor = Color.green;
+        _borderColor = Color.white;
+        _thickBorderColor = Color.white;
+        _highlightColor = new Color(0, 100, 0, 10);
+        _buttonColor = Color.white;
     }
 
     public void drawStart(Graphics2D g2d) {
@@ -40,7 +55,7 @@ public class Ui {
         _startButtonX = sX;
         _startButtonY = sY;
 
-        g2d.setColor(Color.white);
+        g2d.setColor(_buttonColor);
         g2d.setFont(_defaultFond.deriveFont(fontSize));
         g2d.drawString(str, sX, sY);
     }
@@ -49,13 +64,13 @@ public class Ui {
         // solve button
         String strSolveButton = "Solve";
         float fondSoziSolveButton = 10f * _sudoku._scale;
-        int sbX = (int) (_sudoku.getWidth() * 0.8);
+        int sbX = getXForCenteredText(_defaultFond.deriveFont(fondSoziSolveButton), strSolveButton);
         int sbY = (int) (_sudoku.getHeight() * 0.99);
 
         _solveButtonX = sbX;
         _solveButtonY = sbY;
 
-        g2d.setColor(Color.white);
+        g2d.setColor(_buttonColor);
         g2d.setFont(_defaultFond.deriveFont(fondSoziSolveButton));
         g2d.drawString(strSolveButton, sbX, sbY);
 
@@ -70,23 +85,22 @@ public class Ui {
                 int startNumber = _sudoku.get_startField()[yCord][xCord];
 
                 // borders
-                g2d.setColor(Color.white);
-                g2d.drawRect(x, y, _sudoku._tileSize - 1, _sudoku._tileSize - 1);
+                g2d.setColor(_borderColor);
+                g2d.drawRect(x, y, _sudoku._tileSize, _sudoku._tileSize);
 
                 // highlight tile
                 if (_isHighlighted) {
-                    int highX = _highlightedX * _sudoku._tileSize;
-                    int highY = _highlightedY * _sudoku._tileSize;
-                    Color c = new Color(0, 100, 0, 10);
-                    g2d.setColor(c);
-                    g2d.fillRect(highX, highY, _sudoku._tileSize, _sudoku._tileSize);
+                    int highX = _highlightedX * _sudoku._tileSize + 1;
+                    int highY = _highlightedY * _sudoku._tileSize + 1;
+                    g2d.setColor(_highlightColor);
+                    g2d.fillRect(highX, highY, _sudoku._tileSize - 1, _sudoku._tileSize - 1);
                 }
 
                 // number
                 if (startNumber != 0) {
-                    g2d.setColor(Color.green);
+                    g2d.setColor(_startNumberColor);
                 } else {
-                    g2d.setColor(Color.white);
+                    g2d.setColor(_numberColor);
                 }
                 String str = "";
                 int number = _sudoku.get_field()[yCord][xCord];
@@ -99,6 +113,20 @@ public class Ui {
                 int nY = getYForCenteredText(_defaultFond.deriveFont(fontSize), str, y, y + _sudoku._tileSize) + y;
                 g2d.drawString(str, nX, nY);
             }
+        }
+
+        // line borders for 3x3 rectangles with wider lines
+        for (int x = 1; x < 3; x++) {
+            g2d.setColor(_thickBorderColor);
+            g2d.drawLine(x * _sudoku._tileSize * 3, 0, x * _sudoku._tileSize * 3, _sudoku.get_sudokuHeight());
+            g2d.drawLine(x * _sudoku._tileSize * 3 + 1, 0, x * _sudoku._tileSize * 3 + 1, _sudoku.get_sudokuHeight());
+            g2d.drawLine(x * _sudoku._tileSize * 3 - 1, 0, x * _sudoku._tileSize * 3 - 1, _sudoku.get_sudokuHeight());
+        }
+        for (int y = 1; y < 3; y++) {
+            g2d.setColor(_thickBorderColor);
+            g2d.drawLine(0, y * _sudoku._tileSize * 3, _sudoku.get_sudokuWidth(), y * _sudoku._tileSize * 3);
+            g2d.drawLine(0, y * _sudoku._tileSize * 3 + 1, _sudoku.get_sudokuWidth(), y * _sudoku._tileSize * 3 + 1);
+            g2d.drawLine(0, y * _sudoku._tileSize * 3 - 1, _sudoku.get_sudokuWidth(), y * _sudoku._tileSize * 3 - 1);
         }
     }
 

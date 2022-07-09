@@ -11,7 +11,7 @@ public class Sudoku extends JPanel implements Runnable {
 
     // game field
     private int[][] _field;
-    private int[][] _startField;
+    private final int[][] _startField;
 
     // game state
     public final int STATE_START = 0;
@@ -86,7 +86,7 @@ public class Sudoku extends JPanel implements Runnable {
     /**
      * return false if number is wrong on given x and y position row
      */
-    private boolean testRow(int x, int y, int number) {
+    private boolean testRow(int y, int number) {
         for (int i = 0; i < 9; i++) {
             if (number == _field[y][i]) {
                 System.out.println("number in row");
@@ -99,7 +99,7 @@ public class Sudoku extends JPanel implements Runnable {
     /**
      * return false if number is wrong on given x and y position column
      */
-    private boolean testColumn(int x, int y, int number) {
+    private boolean testColumn(int x, int number) {
         for (int i = 0; i < 9; i++) {
             if (number == _field[i][x]) {
                 System.out.println("number in column");
@@ -174,10 +174,10 @@ public class Sudoku extends JPanel implements Runnable {
             System.out.println("Occupied position");
             return false;
         }
-        if (!testRow(x, y, number)) {
+        if (!testRow(y, number)) {
             return false;
         }
-        if (!testColumn(x, y, number)) {
+        if (!testColumn(x, number)) {
             return false;
         }
         if (!testSquare(x, y, number)) {
@@ -285,12 +285,8 @@ public class Sudoku extends JPanel implements Runnable {
         Graphics2D g2d = (Graphics2D) g;
 
         switch (_gameState) {
-            case STATE_START:
-                _ui.drawStart(g2d);
-                break;
-            case STATE_GAME:
-                _ui.drawGame(g2d);
-                break;
+            case STATE_START -> _ui.drawStart(g2d);
+            case STATE_GAME -> _ui.drawGame(g2d);
         }
     }
 

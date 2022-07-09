@@ -83,6 +83,9 @@ public class Solver implements Runnable {
         return false;
     }
 
+    /*
+     * return the values of a int[][] as a int[]
+     */
     public int[] convertField(int[][] field) {
         int[] fieldArrOneDim = new int[field.length * field[0].length];
         int index = 0;
@@ -98,8 +101,8 @@ public class Solver implements Runnable {
     public int[] convertCords(int index, int[][] field) {
         int xWidth = field[0].length;
         int yHeight = field.length;
-        int x = (int) index % xWidth;
-        int y = (int) index / yHeight;
+        int x = index % xWidth;
+        int y = index / yHeight;
         int[] intArr = new int[2];
         intArr[0] = x;
         intArr[1] = y;

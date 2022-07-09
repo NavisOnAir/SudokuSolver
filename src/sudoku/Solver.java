@@ -1,6 +1,6 @@
 package sudoku;
 
-public class Solver {
+public class Solver implements Runnable {
 
     // instances
     Sudoku _sudoku;
@@ -10,16 +10,17 @@ public class Solver {
     }
 
     public boolean solve() {
-        bruteForce(1);
-        for (int i = 1; i <= 9; i++) {
-            if (_sudoku.insertNumber(0, 0, i)) {
-                return true;
-            }
-        }
-        return false;
+        return bruteForce(0, 100000000);
     }
 
-    private boolean bruteForce(int index) {
+    private boolean bruteForce(int index, long speed) {
+        if (speed > 0) {
+            long currTime = System.nanoTime();
+            long timeEnd = currTime + speed;
+            while (System.nanoTime() < timeEnd) {
+
+            }
+        }
         int[] cords = convertCords(index, _sudoku.get_field());
         int x = cords[0];
         int y = cords[1];
@@ -27,52 +28,52 @@ public class Solver {
             return true;
         }
         if (_sudoku.isOccupied(x, y)) {
-            if(bruteForce(index + 1)) {
+            if(bruteForce(index + 1, speed)) {
                 return true;
             }
         } else {
             if (_sudoku.insertNumber(x, y, 1)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 2)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 3)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 4)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 5)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 6)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 7)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 8)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
             if (_sudoku.insertNumber(x, y, 9)) {
-                if (bruteForce(index + 1)) {
+                if (bruteForce(index + 1, speed)) {
                     return true;
                 }
             }
@@ -103,5 +104,10 @@ public class Solver {
         intArr[0] = x;
         intArr[1] = y;
         return  intArr;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(solve());
     }
 }

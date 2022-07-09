@@ -78,7 +78,9 @@ public class Sudoku extends JPanel implements Runnable {
     // solver
     public void solve() {
         Solver sl = new Solver(this);
-        System.out.println(sl.solve());
+        Thread solveThread = new Thread(sl);
+        solveThread.start();
+        //System.out.println(sl.solve());
     }
 
     /**

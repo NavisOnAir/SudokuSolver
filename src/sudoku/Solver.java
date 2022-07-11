@@ -32,6 +32,14 @@ public class Solver implements Runnable {
                 return true;
             }
         } else {
+            for (int i = 1; i <= 9; i++) {
+                if (_sudoku.insertNumber(x, y, i)) {
+                    if (bruteForce(index + 1, speed)) {
+                        return true;
+                    }
+                }
+            }
+            /*
             if (_sudoku.insertNumber(x, y, 1)) {
                 if (bruteForce(index + 1, speed)) {
                     return true;
@@ -77,6 +85,7 @@ public class Solver implements Runnable {
                     return true;
                 }
             }
+            */
         }
         System.out.println("Deleted num");
         _sudoku.deleteNum(x, y);

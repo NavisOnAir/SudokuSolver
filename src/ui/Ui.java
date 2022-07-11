@@ -18,6 +18,8 @@ public class Ui {
     public Color _borderColor;
     public Color _thickBorderColor;
     public Color _highlightColor;
+    public Color _defaultHighlightColor;
+    public Color _falseHighlightColor;
     public Color _buttonColor;
 
     // ui
@@ -26,6 +28,9 @@ public class Ui {
 
     public int _solveButtonX;
     public int _solveButtonY;
+
+    public int _createButtonX;
+    public int _createButtonY;
 
     public int _highlightedX;
     public int _highlightedY;
@@ -43,6 +48,8 @@ public class Ui {
         _borderColor = Color.white;
         _thickBorderColor = Color.white;
         _highlightColor = new Color(0, 100, 0, 10);
+        _defaultHighlightColor = _highlightColor;
+        _falseHighlightColor = new Color(100, 0, 0, 10);
         _buttonColor = Color.white;
     }
 
@@ -73,6 +80,19 @@ public class Ui {
         g2d.setColor(_buttonColor);
         g2d.setFont(_defaultFond.deriveFont(fondSoziSolveButton));
         g2d.drawString(strSolveButton, sbX, sbY);
+
+        // create Button
+        String strCreateButton = "Create";
+        float fondSizeCreateButton = 10f * _sudoku._scale;
+        int cbX = (int) (_sudoku.getWidth() * 0.01);
+        int cbY = (int) (_sudoku.getHeight() * 0.99);
+
+        _createButtonX = cbX;
+        _createButtonY = cbY;
+
+        g2d.setColor(_buttonColor);
+        g2d.setFont(_defaultFond.deriveFont(fondSizeCreateButton));
+        g2d.drawString(strCreateButton, cbX, cbY);
 
         // sudoku field
         for (int x = 0; x < _sudoku.get_sudokuWidth(); x += _sudoku._tileSize) {

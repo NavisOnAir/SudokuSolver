@@ -15,6 +15,7 @@ public class KeyHandler implements KeyListener {
     public boolean _is7 = false;
     public boolean _is8 = false;
     public boolean _is9 = false;
+    public boolean _is0 = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -25,6 +26,7 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         switch (code) {
+            case 96 -> _is0 = true;
             case 49, 97 -> _is1 = true;
             case 50, 98 -> _is2 = true;
             case 51, 99 -> _is3 = true;
@@ -42,6 +44,7 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
         switch (code) {
+            case 96 -> _is0 = false;
             case 49, 97 -> _is1 = false;
             case 50, 98 -> _is2 = false;
             case 51, 99 -> _is3 = false;

@@ -34,11 +34,17 @@ public class MouseHandler implements java.awt.event.MouseListener {
                 int x = (int) e.getX() / _sudoku._tileSize;
                 int y = (int) e.getY() / _sudoku._tileSize;
                 _ui.highlight(x, y);
+                _ui._highlightColor = _ui._defaultHighlightColor;
             }
 
             // solve button
             if (_ui.checkRectangle(e.getX(), e.getY(), _ui._defaultFond.deriveFont(10f * _sudoku._scale).getStringBounds("Solve", _ui._frc), _ui._solveButtonX, _ui._solveButtonY)) {
                 _sudoku.solve();
+            }
+
+            // create Button
+            if (_ui.checkRectangle(e.getX(), e.getY(), _ui._defaultFond.deriveFont(10f * _sudoku._scale).getStringBounds("Create", _ui._frc), _ui._createButtonX, _ui._createButtonY)) {
+                _sudoku.createSudoku();
             }
         }
     }

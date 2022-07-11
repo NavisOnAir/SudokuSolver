@@ -6,6 +6,7 @@ import ui.Ui;
 
 import javax.swing.JPanel;
 import java.awt.*;
+import java.util.Random;
 
 public class Sudoku extends JPanel implements Runnable {
 
@@ -21,7 +22,7 @@ public class Sudoku extends JPanel implements Runnable {
 
     // ui size
     private final int _origTileSize = 16;
-    public final int _scale = 4;
+    public final int _scale = 5;
     public final int _tileSize = _origTileSize * _scale;
     private final int _screenWidth;
     private final int _screenHeight;
@@ -52,7 +53,7 @@ public class Sudoku extends JPanel implements Runnable {
                         {0, 9, 0, 0, 7, 5, 0, 0, 6},
                         {0, 0, 0, 0, 1, 2, 0, 4, 0}
                 };
-        _field = new int[][]
+        /*_field = new int[][]
                 {
                         {0, 0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -63,7 +64,7 @@ public class Sudoku extends JPanel implements Runnable {
                         {0, 0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 0, 0, 0, 0, 0, 0, 0}
-                };
+                };*/
         _startField = new int[_field.length][_field[0].length];
         for (int i = 0; i < _startField.length; i++) {
             for (int j = 0; j < _startField[0].length; j++) {
@@ -184,15 +185,23 @@ public class Sudoku extends JPanel implements Runnable {
     public boolean input(int x, int y, int number) {
         if (_startField[y][x] != 0) {
             System.out.println("Occupied position");
+            _ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
+        if (number == 0) {
+            _field[y][x] = 0;
+            return true;
+        }
         if (!testRow(y, number)) {
+            //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
         if (!testColumn(x, number)) {
+            //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
         if (!testSquare(x, y, number)) {
+            //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
 
@@ -212,6 +221,20 @@ public class Sudoku extends JPanel implements Runnable {
         } else {
             return false;
         }
+    }
+
+    // create a new sudoku
+    public int[][] createSudoku(){
+        SudokuGenerator sg = new SudokuGenerator(9, 70);
+        sg.fillValues();
+        int[][] field = sg.returnSudoku();
+        _field = field;
+        for (int i = 0; i < _startField.length; i++) {
+            for (int j = 0; j < _startField[0].length; j++) {
+                _startField[i][j] = _field[i][j];
+            }
+        }
+        return field;
     }
 
     public void startGame() {
@@ -241,6 +264,11 @@ public class Sudoku extends JPanel implements Runnable {
             case STATE_START:
                 break;
             case STATE_GAME:
+                if (_ui._isHighlighted) {
+                    if (_keyHand._is0) {
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 0);
+                    }
+                }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is1) {
                         insertNumber(_ui._highlightedX, _ui._highlightedY, 1);

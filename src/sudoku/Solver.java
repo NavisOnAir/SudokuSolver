@@ -1,5 +1,6 @@
 package sudoku;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 public class Solver implements Runnable {
@@ -23,16 +24,16 @@ public class Solver implements Runnable {
         return bruteForce(0, _speed);
     }
 
-    public void solveAll() {
+    public Vector<int[][]> getSudokus() {
         Vector<int[][]> sudokus = new Vector<int[][]>();
-        int maxSudokus = 9*9*9;
+        int maxSudokus = 9*9;
         for (int startIndex = 0; startIndex < (int) maxSudokus / 9; startIndex++) {
             for (int startNum = 1; startNum <= maxSudokus % 10; startNum++) {
                 // creating template
                 int[][] field = new int[9][9];
                 int[] cords = convertCords(startIndex, field);
-                int x = cords[0];
-                int y = cords[1];
+                int y = cords[0];
+                int x = cords[1];
                 field[y][x] = startNum;
                 int[][] startField = new int[9][9];
                 for (int i = 0; i < startField.length; i++) {
@@ -58,6 +59,28 @@ public class Solver implements Runnable {
                 System.out.println();
             }
             System.out.println("----------------------------------");
+        }
+
+        return sudokus;
+    }
+
+    public int[][] getSudoku() {
+        // creating template
+        int[][] field = new int[9][9];
+        int[][] startField = new int[9][9];
+        int index = (int) (Math.random() * 9);
+        field[index] = getOneLinePermutation();
+        for (int i = 0; i < startField.length; i++) {
+            System.arraycopy(field[i], 0, startField[i], 0, startField[0].length);
+        }
+        // solving
+        _field = field;
+        _startField = startField;
+        _speed = 0;
+        if(solve()) {
+            return field;
+        } else {
+            return getSudoku();
         }
     }
 
@@ -140,6 +163,20 @@ public class Solver implements Runnable {
         return false;
     }
 
+    private int[] getOneLinePermutation() {
+        int[] perm = new int[9];
+        int num = 1;
+        for (int i = 1; i <= 9; i++) {
+            int index = (int) (Math.random() * 9);
+            if (perm[index] != 0) {
+                i--;
+            } else {
+                perm[index] = i;
+            }
+        }
+        return perm;
+    }
+
     /*
      * return the values of a int[][] as a int[]
      */
@@ -169,7 +206,7 @@ public class Solver implements Runnable {
     @Override
     public void run() {
         if (_solveAll) {
-            solveAll();
+            getSudokus();
         } else {
             System.out.println(solve());
         }

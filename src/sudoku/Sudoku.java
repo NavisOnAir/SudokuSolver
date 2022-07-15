@@ -6,7 +6,7 @@ import ui.Ui;
 
 import javax.swing.JPanel;
 import java.awt.*;
-import java.util.Random;
+import java.util.Vector;
 
 public class Sudoku extends JPanel implements Runnable {
 
@@ -91,7 +91,6 @@ public class Sudoku extends JPanel implements Runnable {
     // solver
     public void solve() {
         Solver sl = new Solver(this, _field, _startField, 10000000);
-        sl.set_solveAll(true);
         Thread solveThread = new Thread(sl);
         solveThread.start();
         //System.out.println(sl.solve());
@@ -235,7 +234,7 @@ public class Sudoku extends JPanel implements Runnable {
             System.arraycopy(_field[i], 0, _startField[i], 0, _startField[0].length);
         }
         return field;*/
-        _field = createSudokuField(0);
+        _field = createSudokuField(3);
         for (int i = 0; i < _startField.length; i++) {
             System.arraycopy(_field[i], 0, _startField[i], 0, _startField[0].length);
         }
@@ -245,28 +244,32 @@ public class Sudoku extends JPanel implements Runnable {
      * difficulty value between 0 and 3
      */
     public int[][] createSudokuField(int difficulty) {
-        int[][] field = new int[9][9];
-        int[][] startField = new int[9][9];
         int numNumbers = switch (difficulty) {
-            case 0 -> (int) (Math.random() * 5 + 40);
-            case 1 -> (int) (Math.random() * 5 + 30);
-            case 2 -> (int) (Math.random() * 5 + 20);
-            case 3 -> (int) (Math.random() * 5 + 10);
+            case 3 -> (int) (Math.random() * 5 + 60);
+            case 2 -> (int) (Math.random() * 5 + 50);
+            case 1 -> (int) (Math.random() * 5 + 40);
+            case 0 -> (int) (Math.random() * 5 + 30);
             default -> 10;
         };
+
+        // get solved sudokus
+        Solver sol = new Solver(this, _field, _startField , 0);
+        int[][] solvedSud = sol.getSudoku();
+
+        // remove numbers
         for (int i = 0; i < numNumbers; i++) {
-            int x = (int) (Math.random() * 9);
-            int y = (int) (Math.random() * 9);
-            int num = (int) (Math.random() * 9 + 1);
-            if (input(x, y, num, field, startField)) {
-                for (int j = 0; j < startField.length; j++) {
-                    System.arraycopy(field[j], 0, startField[j], 0, startField[0].length);
-                }
+            int index = (int) (Math.random() * 81);
+            int[] cords = sol.convertCords(index, solvedSud);
+            int x = cords[0];
+            int y = cords[1];
+            if (solvedSud[y][x] != 0) {
+                solvedSud[y][x] = 0;
             } else {
                 i--;
             }
+
         }
-        return field;
+        return solvedSud;
     }
 
     public void startGame() {

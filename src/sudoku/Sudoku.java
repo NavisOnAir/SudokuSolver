@@ -90,7 +90,8 @@ public class Sudoku extends JPanel implements Runnable {
 
     // solver
     public void solve() {
-        Solver sl = new Solver(this);
+        Solver sl = new Solver(this, _field, _startField, 10000000);
+        sl.set_solveAll(true);
         Thread solveThread = new Thread(sl);
         solveThread.start();
         //System.out.println(sl.solve());
@@ -99,9 +100,9 @@ public class Sudoku extends JPanel implements Runnable {
     /**
      * return false if number is wrong on given x and y position row
      */
-    private boolean testRow(int y, int number) {
+    private boolean testRow(int y, int number, int[][] field) {
         for (int i = 0; i < 9; i++) {
-            if (number == _field[y][i]) {
+            if (number == field[y][i]) {
                 System.out.println("number in row");
                 return false;
             }
@@ -112,9 +113,9 @@ public class Sudoku extends JPanel implements Runnable {
     /**
      * return false if number is wrong on given x and y position column
      */
-    private boolean testColumn(int x, int number) {
+    private boolean testColumn(int x, int number, int[][] field) {
         for (int i = 0; i < 9; i++) {
-            if (number == _field[i][x]) {
+            if (number == field[i][x]) {
                 System.out.println("number in column");
                 return false;
             }
@@ -125,7 +126,7 @@ public class Sudoku extends JPanel implements Runnable {
     /**
      * return false if number is wrong on given x and y position square
      */
-    private boolean testSquare(int x, int y, int number) {
+    private boolean testSquare(int x, int y, int number, int[][] field) {
         int squareX;
         int squareY;
 
@@ -148,7 +149,7 @@ public class Sudoku extends JPanel implements Runnable {
         // checks every position in the corresponding 3x3 square
         for (int _x = squareX; _x < squareX + 3; _x++) {
             for (int _y = squareY; _y < squareY + 3; _y++) {
-                if (number == _field[_y][_x]) {
+                if (number == field[_y][_x]) {
                     System.out.println("number in square");
                     return false;
                 }
@@ -158,8 +159,8 @@ public class Sudoku extends JPanel implements Runnable {
         return true;
     }
 
-    public boolean isOccupied(int x, int y) {
-        return _startField[y][x] != 0;
+    public boolean isOccupied(int x, int y, int[][] startField) {
+        return startField[y][x] != 0;
     }
 
     // output
@@ -182,41 +183,41 @@ public class Sudoku extends JPanel implements Runnable {
     }
 
     // input
-    public boolean input(int x, int y, int number) {
-        if (_startField[y][x] != 0) {
+    public boolean input(int x, int y, int number, int[][] field, int[][] startField) {
+        if (startField[y][x] != 0) {
             System.out.println("Occupied position");
             _ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
         if (number == 0) {
-            _field[y][x] = 0;
+            field[y][x] = 0;
             return true;
         }
-        if (!testRow(y, number)) {
+        if (!testRow(y, number, field)) {
             //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
-        if (!testColumn(x, number)) {
+        if (!testColumn(x, number, field)) {
             //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
-        if (!testSquare(x, y, number)) {
+        if (!testSquare(x, y, number, field)) {
             //_ui._highlightColor = _ui._falseHighlightColor;
             return false;
         }
 
         System.out.println("insert number");
-        _field[y][x] = number;
+        field[y][x] = number;
         return true;
     }
 
-    public boolean insertNumber(int x, int y, int number) {
-        return input(x, y, number);
+    public boolean insertNumber(int x, int y, int number, int[][] field, int[][] startField) {
+        return input(x, y, number, field, startField);
     }
 
-    public boolean deleteNum(int x, int y) {
-        if (_startField[y][x] == 0) {
-            _field[y][x] = 0;
+    public boolean deleteNum(int x, int y, int[][] field, int[][] startField) {
+        if (startField[y][x] == 0) {
+            field[y][x] = 0;
             return true;
         } else {
             return false;
@@ -224,14 +225,45 @@ public class Sudoku extends JPanel implements Runnable {
     }
 
     // create a new sudoku
-    public int[][] createSudoku(){
+    public void createSudoku(){
+        /*
         SudokuGenerator sg = new SudokuGenerator(9, 70);
         sg.fillValues();
         int[][] field = sg.returnSudoku();
         _field = field;
         for (int i = 0; i < _startField.length; i++) {
-            for (int j = 0; j < _startField[0].length; j++) {
-                _startField[i][j] = _field[i][j];
+            System.arraycopy(_field[i], 0, _startField[i], 0, _startField[0].length);
+        }
+        return field;*/
+        _field = createSudokuField(0);
+        for (int i = 0; i < _startField.length; i++) {
+            System.arraycopy(_field[i], 0, _startField[i], 0, _startField[0].length);
+        }
+    }
+
+    /*
+     * difficulty value between 0 and 3
+     */
+    public int[][] createSudokuField(int difficulty) {
+        int[][] field = new int[9][9];
+        int[][] startField = new int[9][9];
+        int numNumbers = switch (difficulty) {
+            case 0 -> (int) (Math.random() * 5 + 40);
+            case 1 -> (int) (Math.random() * 5 + 30);
+            case 2 -> (int) (Math.random() * 5 + 20);
+            case 3 -> (int) (Math.random() * 5 + 10);
+            default -> 10;
+        };
+        for (int i = 0; i < numNumbers; i++) {
+            int x = (int) (Math.random() * 9);
+            int y = (int) (Math.random() * 9);
+            int num = (int) (Math.random() * 9 + 1);
+            if (input(x, y, num, field, startField)) {
+                for (int j = 0; j < startField.length; j++) {
+                    System.arraycopy(field[j], 0, startField[j], 0, startField[0].length);
+                }
+            } else {
+                i--;
             }
         }
         return field;
@@ -266,52 +298,52 @@ public class Sudoku extends JPanel implements Runnable {
             case STATE_GAME:
                 if (_ui._isHighlighted) {
                     if (_keyHand._is0) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 0);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 0, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is1) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 1);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 1, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is2) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 2);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 2, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is3) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 3);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 3, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is4) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 4);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 4, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is5) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 5);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 5, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is6) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 6);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 6, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is7) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 7);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 7, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is8) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 8);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 8, _field, _startField);
                     }
                 }
                 if (_ui._isHighlighted) {
                     if (_keyHand._is9) {
-                        insertNumber(_ui._highlightedX, _ui._highlightedY, 9);
+                        insertNumber(_ui._highlightedX, _ui._highlightedY, 9, _field, _startField);
                     }
                 }
                 break;
